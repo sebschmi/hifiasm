@@ -24789,7 +24789,7 @@ R_to_U* ruIndex, int max_hang, int min_ovlp)
         EvaluateLen(ug->u, v) = ug->u.a[v].n;
     }
     
-    fprintf(stderr, "bubble_dist is %d\n", bubble_dist);
+    fprintf(stderr, "bubble_dist is %ld\n", bubble_dist);
     if(bubble_dist > 0)
     {
         asg_pop_bubble_primary_trio(ug, &bubble_dist, (uint32_t)-1, DROP, NULL, NULL, 0);
@@ -30884,10 +30884,12 @@ ma_sub_t **coverage_cut_ptr, int debug_g)
     // flat_bubbles(sg, ruIndex->is_het); free(ruIndex->is_het); ruIndex->is_het = NULL;
     flat_soma_v(sg, sources, ruIndex);
 
-    char* o_file_alternate = (char*)malloc(strlen(o_file)+25);
-    sprintf(o_file_alternate, "%s.bubpop", o_file);
-    output_unitig_graph(sg, coverage_cut, o_file, sources, ruIndex, max_hang_length, mini_overlap_length);
-    free(o_file_alternate);
+    {
+        char* o_file_alternate = (char*)malloc(strlen(o_file)+25);
+        sprintf(o_file_alternate, "%s.bubpop", o_file);
+        output_unitig_graph(sg, coverage_cut, o_file, sources, ruIndex, max_hang_length, mini_overlap_length);
+        free(o_file_alternate);
+    }
 
     output_contig_graph_primary_pre(sg, coverage_cut, o_file, sources, reverse_sources, 
         asm_opt.small_pop_bubble_size, asm_opt.max_short_tip, ruIndex, max_hang_length, mini_overlap_length);
