@@ -30887,7 +30887,7 @@ ma_sub_t **coverage_cut_ptr, int debug_g)
     {
         char* o_file_alternate = (char*)malloc(strlen(o_file)+25);
         sprintf(o_file_alternate, "%s.bubpop", o_file);
-        output_unitig_graph(sg, coverage_cut, o_file, sources, ruIndex, max_hang_length, mini_overlap_length);
+        output_unitig_graph(sg, coverage_cut, o_file_alternate, sources, ruIndex, max_hang_length, mini_overlap_length);
         free(o_file_alternate);
     }
 
