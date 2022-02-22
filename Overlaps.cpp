@@ -24774,11 +24774,11 @@ void output_contig_graph_primary_pre(asg_t *sg, ma_sub_t* coverage_cut, char* ou
 ma_hit_t_alloc* sources, ma_hit_t_alloc* reverse_sources, uint64_t bubble_dist, long long tipsLen, 
 R_to_U* ruIndex, int max_hang, int min_ovlp)
 {
-    kvec_asg_arc_t_warp new_rtg_edges;
-    kv_init(new_rtg_edges.a);
-
     ma_ug_t *ug = NULL;
     ug = ma_ug_gen_primary(sg, PRIMARY_LABLE);
+
+    kvec_asg_arc_t_warp new_rtg_edges;
+    kv_init(new_rtg_edges.a);
 
     asg_t* nsg = ug->g;
     uint32_t n_vtx = nsg->n_seq, v;
@@ -24788,7 +24788,8 @@ R_to_U* ruIndex, int max_hang, int min_ovlp)
         nsg->seq[v].c = PRIMARY_LABLE;
         EvaluateLen(ug->u, v) = ug->u.a[v].n;
     }
-
+    
+    fprintf(stderr, "bubble_dist is %d\n", bubble_dist);
     if(bubble_dist > 0)
     {
         asg_pop_bubble_primary_trio(ug, &bubble_dist, (uint32_t)-1, DROP, NULL, NULL, 0);
@@ -24838,11 +24839,13 @@ R_to_U* ruIndex, float chimeric_rate, float drop_ratio, int max_hang, int min_ov
     tipsLen, tip_drop_ratio, stops_threshold, ruIndex, chimeric_rate, drop_ratio, 
     max_hang, min_ovlp, &new_rtg_edges, NULL, b_mask_t, 0, 0);
 
+    fprintf(stderr, "b_low_cov is %d\n", asm_opt.b_low_cov);
     if(asm_opt.b_low_cov > 0)
     {
         break_ug_contig(&ug, sg, &R_INF, coverage_cut, sources, ruIndex, &new_rtg_edges, max_hang, min_ovlp, 
         &asm_opt.b_low_cov, NULL, asm_opt.m_rate);
     }
+    fprintf(stderr, "b_high_cov is %d\n", asm_opt.b_high_cov);
     if(asm_opt.b_high_cov > 0)
     {
         break_ug_contig(&ug, sg, &R_INF, coverage_cut, sources, ruIndex, &new_rtg_edges, max_hang, min_ovlp, 
@@ -30880,6 +30883,11 @@ ma_sub_t **coverage_cut_ptr, int debug_g)
     output_unitig_graph(sg, coverage_cut, o_file, sources, ruIndex, max_hang_length, mini_overlap_length);
     // flat_bubbles(sg, ruIndex->is_het); free(ruIndex->is_het); ruIndex->is_het = NULL;
     flat_soma_v(sg, sources, ruIndex);
+
+    char* o_file_alternate = (char*)malloc(strlen(o_file)+25);
+    sprintf(o_file_alternate, "%s.bubpop", o_file);
+    output_unitig_graph(sg, coverage_cut, o_file, sources, ruIndex, max_hang_length, mini_overlap_length);
+    free(o_file_alternate);
 
     output_contig_graph_primary_pre(sg, coverage_cut, o_file, sources, reverse_sources, 
         asm_opt.small_pop_bubble_size, asm_opt.max_short_tip, ruIndex, max_hang_length, mini_overlap_length);
